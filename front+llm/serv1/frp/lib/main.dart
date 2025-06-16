@@ -48,6 +48,8 @@ class TrainingProgramsPage extends StatelessWidget {
         backgroundColor: Colors.white,
         actions: [Icon(Icons.settings, color: Colors.black)],
         centerTitle: true,
+        actionsPadding: EdgeInsets.all(16),
+        toolbarHeight: 85,
       ),
       body: Padding(
         padding: EdgeInsets.all(16),
