@@ -30,15 +30,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   int _xpForLevel(int level) => level * 50;
 
-  double _progress(int level, int xp) {
-    final int xpStart = (level - 1) * 50; // Начало текущего уровня
-    final int xpEnd = level * 50; // Конец текущего уровня
-    final int gained = xp - xpStart; // Сколько XP набрал в этом уровне
-    final int range = xpEnd - xpStart; // Всего XP на уровне
-
-    return (gained / range).clamp(0.0, 1.0);
-  }
-
   /* --------------------  Служебные апдейтеры  -------------------- */
   Future<void> _updateField(
     String key,
@@ -122,6 +113,16 @@ class _ProfilePageState extends State<ProfilePage> {
         final trainingsCompleted =
             int.tryParse(data['trainingsCompleted']?.toString() ?? '0') ?? 0;
 
+        // Сколько XP требуется на текущий уровень
+        final need = _xpForLevel(level); // level * 50
+
+        // Столько набрано в рамках именно этого уровня
+        final gainedThisLevel = xp % need;
+
+        // Прогресс от 0.0 до 1.0, NaN/Infinity исключены
+        final progress =
+            need == 0 ? 0.0 : (gainedThisLevel / need).clamp(0.0, 1.0);
+
         return Scaffold(
           appBar: AppBar(
             title: const Text('Profile'),
@@ -181,7 +182,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         minHeight: 20,
-                        value: (xp % 50) / 50,
+                        value: progress,
                         backgroundColor: Colors.grey[300],
                         valueColor: AlwaysStoppedAnimation(
                           const Color.fromARGB(255, 0, 170, 6),

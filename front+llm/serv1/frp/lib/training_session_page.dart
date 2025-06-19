@@ -112,7 +112,7 @@ class _TrainingSessionPageState extends State<TrainingSessionPage> {
     // Получим текущие XP и уровень
     final snap = await userRef.get();
     final data = snap.value as Map? ?? {};
-    final currentCount = int.tryParse(snap.value?.toString() ?? '0') ?? 0;
+    final currentCount = data['trainingsCompleted'] ?? 0;
     final newCount = currentCount + 1;
 
     int xp = (data['xp'] ?? 0) as int;
