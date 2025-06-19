@@ -112,7 +112,7 @@ client = OpenAI(
     base_url='http://localhost:11434/v1',
     api_key='llama3'
 )
-system_message = "You are a helpful assistant, your name is NusqauBot, people use you for asking questions about Gym, also you are helpful assistant that is an expert at extracting the most useful information from a given text. Also bring in extra relevant infromation to the user query from outside the given context."
+system_message = "You are a helpful assistant, your name is VeiderGPT, people use you for asking questions about Gym, also you are helpful assistant that is an expert at extracting the most useful information from a given text. Also bring in extra relevant infromation to the user query from outside the given context."
 
 # DATA
 conversation_history = []
