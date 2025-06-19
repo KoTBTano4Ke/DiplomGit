@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
       body: Column(
         children: [
           const SizedBox(height: 60),
-          Image.asset('assets/dumbbell.png', height: 60), // штанга сверху
+          Image.asset('assets/weight_picked 1.png', height: 60),
           const Spacer(),
           Container(
             padding: const EdgeInsets.all(20),
@@ -75,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Divider(thickness: 1),
                 ),
                 ElevatedButton.icon(
-                  icon: Image.asset('assets/google_logo.png', height: 24),
+                  icon: Image.asset('assets/google_login.png', height: 24),
                   label: const Text("Log in with google"),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
