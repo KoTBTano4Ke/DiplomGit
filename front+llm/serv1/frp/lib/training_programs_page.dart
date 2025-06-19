@@ -47,7 +47,7 @@ class _TrainingProgramsPageState extends State<TrainingProgramsPage> {
     final uid = FirebaseAuth.instance.currentUser!.uid;
   final userSnap = await FirebaseDatabase.instance.ref('users/$uid/lastTraining').get();
   final lastId = userSnap.value as String?;
-    // 1) Firebase и SharedPreferences
+    // 1) Firebase
     await Firebase.initializeApp();
 
     // 2) Загружаем все программы
