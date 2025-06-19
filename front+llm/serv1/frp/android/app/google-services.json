@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "630817165794",
+    "firebase_url": "https://diploma-frp-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "diploma-frp",
+    "storage_bucket": "diploma-frp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:630817165794:android:f6232ab7f40177901da9bb",
+        "android_client_info": {
+          "package_name": "com.example.frp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "630817165794-oqv04r3hb4k2ojuepkndjmom1oh34o8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.frp",
+            "certificate_hash": "75432275f1212e2b5ce6fc61d5554f3f455f6fc1"
+          }
+        },
+        {
+          "client_id": "630817165794-c0uubj62nmht81b8fdmgh3t3vhmgegnv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOfEOEl6OOD1Two_UUAK9Emd-5s6AdFfQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "630817165794-c0uubj62nmht81b8fdmgh3t3vhmgegnv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
