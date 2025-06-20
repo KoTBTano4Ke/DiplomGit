@@ -19,66 +19,84 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          const SizedBox(height: 60),
-          Image.asset('assets/weight_picked 1.png', height: 60),
-          Text('FitnessRolePlay', 
-          style: TextStyle(color: Colors.orange, fontSize: 32, fontWeight: FontWeight.bold)),
-          const Spacer(),
-          Container(
-            padding: const EdgeInsets.all(20),
-            margin: const EdgeInsets.symmetric(horizontal: 30),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFF2E6),
-              borderRadius: BorderRadius.circular(20),
-              boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 60),
+            Image.asset('assets/weight_picked 1.png', height: 60),
+            Text(
+              'FitnessRolePlay',
+              style: TextStyle(
+                color: Colors.orange,
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            child: Column(
-              children: [
-                TextField(
-                  controller: emailController,
-                  decoration: const InputDecoration(labelText: 'email:', border: OutlineInputBorder()),
-                ),
-                const SizedBox(height: 15),
-                TextField(
-                  controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'password:', border: OutlineInputBorder()),
-                ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Text("forgot password?", style: TextStyle(color: Color.fromARGB(255, 189, 101, 0))),
+            const SizedBox(height: 90),
+            Container(
+              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.symmetric(horizontal: 30),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF2E6),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [
+                  BoxShadow(color: Colors.black26, blurRadius: 8),
+                ],
+              ),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'email:',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                  const SizedBox(height: 15),
+                  TextField(
+                    controller: passwordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'password:',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
-                  onPressed: () async {
-                    try {
-                      await AuthService().registerWithEmail(
-                        emailController.text.trim(),
-                        passwordController.text.trim(),
-                      );
-                    } catch (e) {
-                      _showError("Ошибка входа: $e");
-                    }
-                  },
-                  child: const Text("Log in", style: TextStyle(fontSize: 18, color: Colors.black)),
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 20),
-                  child: ElevatedButton(
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () async {
+                        final email = emailController.text.trim();
+                        if (email.isEmpty) {
+                          _showError("Введите email");
+                          return;
+                        }
+
+                        try {
+                          await AuthService().sendPasswordReset(email);
+                          _showError(
+                            "Письмо для сброса пароля отправлено на $email",
+                          );
+                        } catch (e) {
+                          _showError("Ошибка: $e");
+                        }
+                      },
+                      child: const Text(
+                        "forgot password?",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 189, 101, 0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 247, 177, 73),
+                      backgroundColor: Colors.orange,
                       minimumSize: const Size.fromHeight(50),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
                     ),
                     onPressed: () async {
                       try {
@@ -90,35 +108,71 @@ class _LoginPageState extends State<LoginPage> {
                         _showError("Ошибка входа: $e");
                       }
                     },
-                    child: const Text("Register", style: TextStyle(fontSize: 18, color: Colors.black)),
+                    child: const Text(
+                      "Log In",
+                      style: TextStyle(fontSize: 18, color: Colors.black),
+                    ),
                   ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: Divider(thickness: 1),
-                ),
-                ElevatedButton.icon(
-                  icon: Image.asset('assets/logo_google.png', height: 24),
-                  label: const Text("Log in with google"),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                  Container(
+                    margin: EdgeInsets.only(top: 20),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          247,
+                          177,
+                          73,
+                        ),
+                        minimumSize: const Size.fromHeight(50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      onPressed: () async {
+                        try {
+                          await AuthService().registerWithEmail(
+                            emailController.text.trim(),
+                            passwordController.text.trim(),
+                          );
+                        } catch (e) {
+                          _showError("Ошибка входа: $e");
+                        }
+                      },
+                      child: const Text(
+                        "Register",
+                        style: TextStyle(fontSize: 18, color: Colors.black),
+                      ),
+                    ),
                   ),
-                  onPressed: () async {
-                    try {
-                      await AuthService().signInWithGoogle();
-                    } catch (e) {
-                      _showError("Ошибка Google входа: $e");
-                    }
-                  },
-                ),
-              ],
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Divider(thickness: 1),
+                  ),
+                  ElevatedButton.icon(
+                    icon: Image.asset('assets/logo_google.png', height: 24),
+                    label: const Text("Log in with google"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size.fromHeight(50),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    onPressed: () async {
+                      try {
+                        await AuthService().signInWithGoogle();
+                      } catch (e) {
+                        _showError("Ошибка Google входа: $e");
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ),
-          const Spacer(flex: 2),
-        ],
+            const SizedBox(height: 2),
+          ],
+        ),
       ),
     );
   }

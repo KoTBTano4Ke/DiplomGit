@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -13,6 +15,40 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _controller = TextEditingController();
   final List<_ChatMessage> _messages = [];
 
+  final _uid = FirebaseAuth.instance.currentUser!.uid;
+  late final DatabaseReference _chatRef;
+
+  @override
+  void initState() {
+    super.initState();
+    _chatRef = FirebaseDatabase.instance.ref('users/$_uid/chatHistory');
+    _loadChatHistory();
+  }
+
+  Future<void> _loadChatHistory() async {
+    final snapshot = await _chatRef.orderByKey().get();
+    if (snapshot.exists) {
+      final data = snapshot.value as Map;
+      final loaded = data.entries.map((entry) {
+        final msg = entry.value as Map;
+        return _ChatMessage(
+          msg['message'],
+          msg['sender'] == 'user',
+        );
+      }).toList();
+      setState(() => _messages.addAll(loaded));
+    }
+  }
+
+  Future<void> _saveMessage(String text, bool isUser) async {
+    final msg = {
+      'message': text,
+      'sender': isUser ? 'user' : 'bot',
+    };
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    await _chatRef.child(timestamp).set(msg);
+  }
+
   Future<void> _sendMessage() async {
     final userInput = _controller.text.trim();
     if (userInput.isEmpty) return;
@@ -21,24 +57,27 @@ class _ChatPageState extends State<ChatPage> {
       _messages.add(_ChatMessage(userInput, true));
     });
     _controller.clear();
+    await _saveMessage(userInput, true);
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.96:5001/chat'),
+        Uri.parse('http://10.244.168.176:5000/chat'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({'prompt': userInput}),
       );
-
       final responseData = json.decode(response.body);
       final reply = responseData['response'] ?? 'Ошибка ответа';
 
       setState(() {
         _messages.add(_ChatMessage(reply, false));
       });
+      await _saveMessage(reply, false);
     } catch (e) {
+      const errorText = 'Ошибка подключения к серверу.';
       setState(() {
-        _messages.add(_ChatMessage('Ошибка подключения к серверу.', false));
+        _messages.add(_ChatMessage(errorText, false));
       });
+      await _saveMessage(errorText, false);
     }
   }
 

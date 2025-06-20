@@ -4,19 +4,13 @@ import torch
 from openai import OpenAI
 from vectordb import get_embedding
 
-## Возвращает лист из 3 нужных контекстов
 def get_relevant_context(rewritten_input, vault_embeddings, vault_content, top_k=5):
     if vault_embeddings.nelement() == 0:  
         return []
-    # Encode the rewritten input
     input_embedding = get_embedding(rewritten_input)
-    # Compute cosine similarity between the input and vault embeddings
     cos_scores = torch.cosine_similarity(torch.tensor(input_embedding).unsqueeze(0), vault_embeddings)
-    # Adjust top_k if it's greater than the number of available scores
     top_k = min(top_k, len(cos_scores))
-    # Sort the scores and get the top-k indices
     top_indices = torch.topk(cos_scores, k=top_k)[1].tolist()
-    # Get the corresponding context from the vault
     relevant_context = []
     for idx in top_indices:
         context = vault_content[idx].strip()
@@ -24,18 +18,14 @@ def get_relevant_context(rewritten_input, vault_embeddings, vault_content, top_k
 
     return relevant_context
 
-## Берёт последние два промпта и делает контекст из этого
 def rewrite_query(user_input, conversation_history, ollama_model):
-    # Extract the last two messages from the conversation history
     last_two_messages = conversation_history[-2:]
 
-    # Build a string representation of these messages, formatting each message with its role and content
     context = ""
     for msg in last_two_messages:
         message = f"{msg['role']}: {msg['content']}"
         context += message + "\n"
 
-    # Использование Ollama3 для перефразирования prompt'a
     prompt = f"""Rewrite the following query by incorporating relevant context from the conversation history.
     The rewritten query should:
     
@@ -114,24 +104,19 @@ client = OpenAI(
 )
 system_message = "You are a helpful assistant, your name is VeiderGPT, people use you for asking questions about Gym, also you are helpful assistant that is an expert at extracting the most useful information from a given text. Also bring in extra relevant infromation to the user query from outside the given context."
 
-# DATA
 conversation_history = []
 
 
-# Flask App
 app = Flask(__name__)
 
 @app.route('/chat', methods=['POST'])
 def chat():
-  # Get user prompt from JSON data
   data = request.get_json()
   prompt = data.get('prompt')
   
   if prompt:
-    # Call ollama_chat function
     response = ollama_chat(prompt, system_message, vault_embeddings_tensor, vault_content, ollama_model, conversation_history)
     
-    # Convert response to JSON
     response_data = {'response': response}
     
     return jsonify(response_data)
@@ -139,4 +124,4 @@ def chat():
   return jsonify({'error': 'Please provide a prompt in the request body'})
 
 if __name__ == '__main__':
-  app.run(host='0.0.0.0', port=5001, debug=True)
+  app.run(host='0.0.0.0', port=5000, debug=True)

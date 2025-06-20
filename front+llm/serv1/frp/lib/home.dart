@@ -13,7 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 1; // Стартовая вкладка: Training
+  int _selectedIndex = 1; 
 
   final List<Widget> _pages = const [
     QuestLogPage(),
@@ -34,11 +34,10 @@ Widget build(BuildContext context) {
       children: [
         _pages[_selectedIndex],
         Positioned(
-          bottom: 70, // чуть выше нижнего навбара
-          right: 20, // отступ от правого края
+          bottom: 70, 
+          right: 20, 
           child: FloatingActionButton(
             onPressed: () {
-              // Перейти на ChatPage
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const ChatPage()),
               );

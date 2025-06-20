@@ -34,19 +34,14 @@ class _TrainingSessionPageState extends State<TrainingSessionPage> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Номер и название
             Text(
               '${current + 1}.  ${exercise.title}',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               textAlign: TextAlign.left,
             ),
             const SizedBox(height: 16),
-
-            // Картинка
             Image.network(exercise.image, height: 200),
             const SizedBox(height: 20),
-
-            // Индикаторы
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -64,8 +59,6 @@ class _TrainingSessionPageState extends State<TrainingSessionPage> {
               ),
             ),
             const SizedBox(height: 20),
-
-            // Альтернатива (заглушка для всех одинаковая)
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -73,14 +66,12 @@ class _TrainingSessionPageState extends State<TrainingSessionPage> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                exercise.description ?? 'No description available.',
+                exercise.description,
                 style: TextStyle(fontSize: 14),
                 textAlign: TextAlign.center,
               ),
             ),
             const Spacer(),
-
-            // Кнопка "next"
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -108,8 +99,6 @@ class _TrainingSessionPageState extends State<TrainingSessionPage> {
   } else {
     final uid = FirebaseAuth.instance.currentUser!.uid;
     final userRef = FirebaseDatabase.instance.ref('users/$uid');
-
-    // Получим текущие XP и уровень
     final snap = await userRef.get();
     final data = snap.value as Map? ?? {};
     final currentCount = data['trainingsCompleted'] ?? 0;
@@ -117,27 +106,19 @@ class _TrainingSessionPageState extends State<TrainingSessionPage> {
 
     int xp = (data['xp'] ?? 0) as int;
     int level = (data['level'] ?? 1) as int;
-
-    // Добавляем 50 XP
     xp += 50;
-
-    // Проверка на повышение уровня
     int nextLevelXP = level * 50;
     while (xp >= nextLevelXP) {
       xp -= nextLevelXP;
       level++;
       nextLevelXP = level * 50;
     }
-
-    // Обновим данные в Firebase
     await userRef.update({
       'lastTraining': widget.program.id,
       'xp': xp,
       'level': level,
       'trainingsCompleted': newCount
     });
-
-    // Обновим дату в тренировке
     await FirebaseDatabase.instance
         .ref('trainings/${widget.program.id}/lastCompleted/$uid')
         .set(DateTime.now().toIso8601String());

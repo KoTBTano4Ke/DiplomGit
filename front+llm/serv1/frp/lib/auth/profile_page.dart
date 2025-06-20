@@ -72,31 +72,27 @@ class _ProfilePageState extends State<ProfilePage> {
     await _updateField('name', currentName);
     final snap = await _userRef.child('name').get();
     await user.updateDisplayName(snap.value?.toString() ?? currentName ?? '');
-    setState(() {}); // перерисовать имя на экране
+    setState(() {}); 
   }
 
-  /* --------------------  Аватар  -------------------- */
   Future<void> _changeAvatar() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked == null) return;
 
-    // загружаем в Storage
     final ref = FirebaseStorage.instance.ref('avatars/${user.uid}.jpg');
     await ref.putFile(File(picked.path));
     final url = await ref.getDownloadURL();
 
-    // записываем ссылку в Auth и RTDB
     await user.updatePhotoURL(url);
     await _userRef.update({'avatar': url});
 
-    if (mounted) setState(() {}); // перерисовать виджет Icon/NetworkImage
+    if (mounted) setState(() {}); 
   }
 
-  /* --------------------  Выход  -------------------- */
+
   Future<void> _signOut() => AuthService().signOut();
 
-  /* --------------------  UI  -------------------- */
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -113,13 +109,10 @@ class _ProfilePageState extends State<ProfilePage> {
         final trainingsCompleted =
             int.tryParse(data['trainingsCompleted']?.toString() ?? '0') ?? 0;
 
-        // Сколько XP требуется на текущий уровень
-        final need = _xpForLevel(level); // level * 50
+        final need = _xpForLevel(level);
 
-        // Столько набрано в рамках именно этого уровня
         final gainedThisLevel = xp % need;
 
-        // Прогресс от 0.0 до 1.0, NaN/Infinity исключены
         final progress =
             need == 0 ? 0.0 : (gainedThisLevel / need).clamp(0.0, 1.0);
 
@@ -153,7 +146,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 8),
 
-                /* ----------  Имя  ---------- */
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -175,7 +167,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 const SizedBox(height: 12),
 
-                /* ----------  XP-Progress  ---------- */
                 Column(
                   children: [
                     ClipRRect(
@@ -214,7 +205,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
                 const SizedBox(height: 24),
 
-                /* ----------  Вес и рост, кликабельные  ---------- */
                 _dataTile(
                   'Weight',
                   weight,
@@ -267,7 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.orange,
               ),
             ),
-            const Spacer(),
+            const SizedBox(),
             Text(value, style: const TextStyle(fontSize: 16)),
             const Icon(Icons.arrow_upward, size: 18, color: Colors.green),
           ],
